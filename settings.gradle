@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) 2020, The casual project. All rights reserved.
+ *
+ * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
+ */
+
+//-*- coding: utf-8 -*-
+include 'ext:casual-api'
+include 'ext:casual-network'
+include 'ext:casual-network-protocol'
+include 'ext:casual-internal'
+include 'standalone'

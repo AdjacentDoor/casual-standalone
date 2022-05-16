@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2017 - 2020, The casual project. All rights reserved.
+ *
+ * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
+ */
+
+//-*- coding: utf-8 -*-
+
+plugins {
+    id 'org.sonarqube' version '2.7'
+}
+
+defaultTasks 'build'
+
+sonarqube {
+    properties {
+        properties["sonar.host.url"] = 'http://localhost:9000'
+        properties["sonar.verbose"] = "true"
+        properties['sonar.java.source'] = 11
+    }
+}
+
+allprojects{
+    tasks.withType(JavaCompile) { 
+	sourceCompatibility = "11"
+	targetCompatibility = "11"
+	options.compilerArgs << "-Xlint:all" << "-Werror"
+    }
+    repositories {
+	mavenCentral()
+    }
+}
+
+subprojects{
+    apply from: "$rootProject.projectDir/versions.gradle"
+    tasks.withType(Test) {
+	useJUnitPlatform()
+	testLogging {
+	    events "passed", "skipped", "failed"
+	}
+    }
+}
+
+task dist(type: Copy, dependsOn: getTasksByName("build", false)) {
+    subprojects.each { subproject ->
+        from "$subproject.buildDir/libs"
+        into "$rootProject.projectDir/dist"
+    }
+}

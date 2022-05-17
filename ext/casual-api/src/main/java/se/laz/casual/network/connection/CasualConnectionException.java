@@ -6,9 +6,8 @@
 
 package se.laz.casual.network.connection;
 
+import jakarta.ejb.ApplicationException;
 import se.laz.casual.api.CasualRuntimeException;
-
-import javax.ejb.ApplicationException;
 
 /**
  * Created by jone on 2017-04-26.

@@ -26,7 +26,6 @@ import se.laz.casual.network.protocol.messages.service.CasualServiceCallReplyMes
 import spock.lang.Shared
 import spock.lang.Specification
 
-import javax.enterprise.concurrent.ManagedExecutorService
 import java.util.concurrent.*
 
 class NettyNetworkConnectionTest extends Specification implements NetworkListener
@@ -135,7 +134,7 @@ class NettyNetworkConnectionTest extends Specification implements NetworkListene
         setup:
         def channel = Mock(Channel)
         1 * channel.close()
-        instance = new NettyNetworkConnection(ci, correlator, channel, conversationMessageStorage, Mock(ManagedExecutorService))
+        instance = new NettyNetworkConnection(ci, correlator, channel, conversationMessageStorage, Mock(ExecutorService))
         when:
         instance.close()
         then:
@@ -147,7 +146,7 @@ class NettyNetworkConnectionTest extends Specification implements NetworkListene
     {
         given:
         def channel = new EmbeddedChannel(CasualNWMessageDecoder.of(), CasualNWMessageEncoder.of(), CasualMessageHandler.of(correlator), ExceptionHandler.of(correlator, Mock(OnNetworkError)))
-        def newInstance = new NettyNetworkConnection(ci, correlator, channel, conversationMessageStorage, Mock(ManagedExecutorService))
+        def newInstance = new NettyNetworkConnection(ci, correlator, channel, conversationMessageStorage, Mock(ExecutorService))
         def future = channel.closeFuture().addListener({ f -> se.laz.casual.network.outbound.NettyNetworkConnection.handleClose(newInstance, this) })
         when:
         future.channel().disconnect()
@@ -192,7 +191,7 @@ class NettyNetworkConnectionTest extends Specification implements NetworkListene
         onNetworkError.notifyListenerIfNotConnected(channel) >> {
             networkError = true
         }
-        def localInstance = new NettyNetworkConnection(ci, correlator, channel, Mock(ConversationMessageStorage), Mock(ManagedExecutorService))
+        def localInstance = new NettyNetworkConnection(ci, correlator, channel, Mock(ConversationMessageStorage), Mock(ExecutorService))
         CasualNWMessageImpl<CasualDomainDiscoveryRequestMessage> requestMessage = createRequestMessage()
         when:
         localInstance.request(requestMessage)
@@ -229,7 +228,7 @@ class NettyNetworkConnectionTest extends Specification implements NetworkListene
         casualDisconnected = true;
     }
 
-   class TestExecutorService implements ManagedExecutorService
+   class TestExecutorService implements ExecutorService
    {
       @Override
       void shutdown()

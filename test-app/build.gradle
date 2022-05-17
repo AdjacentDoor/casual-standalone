@@ -13,8 +13,10 @@ dependencies {
    implementation libs.weld
    implementation project(':ext:casual-api')
    implementation project(':ext:casual-network')
-   implementation project(':ext:casual-network-protocol')
-   implementation project(':ext:casual-internal')
+   implementation project(':standalone')
+   implementation libs.grizzly_http_server
+   implementation libs.grizzly_container
+   implementation libs.commons_io
 
    testImplementation libs.jakartaee_api
    testImplementation project(':ext:casual-api')

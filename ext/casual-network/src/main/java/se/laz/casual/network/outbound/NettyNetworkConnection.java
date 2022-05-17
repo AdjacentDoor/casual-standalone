@@ -27,7 +27,6 @@ import se.laz.casual.network.protocol.messages.conversation.Request;
 import se.laz.casual.network.protocol.messages.domain.CasualDomainConnectReplyMessage;
 import se.laz.casual.network.protocol.messages.domain.CasualDomainConnectRequestMessage;
 
-import javax.enterprise.concurrent.ManagedExecutorService;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
@@ -48,15 +48,15 @@ public final class NettyNetworkConnection implements NetworkConnection, Conversa
     private final ConversationMessageStorage conversationMessageStorage;
     private final Channel channel;
     private final AtomicBoolean connected = new AtomicBoolean(true);
-    private final ManagedExecutorService managedExecutorService;
+    private final ExecutorService executorService;
 
-    private NettyNetworkConnection(BaseConnectionInformation ci, Correlator correlator, Channel channel, ConversationMessageStorage conversationMessageStorage, ManagedExecutorService managedExecutorService)
+    private NettyNetworkConnection(BaseConnectionInformation ci, Correlator correlator, Channel channel, ConversationMessageStorage conversationMessageStorage, ExecutorService executorService)
     {
         this.ci = ci;
         this.correlator = correlator;
         this.channel = channel;
         this.conversationMessageStorage = conversationMessageStorage;
-        this.managedExecutorService = managedExecutorService;
+        this.executorService = executorService;
     }
 
     public static NetworkConnection of(final NettyConnectionInformation ci, final NetworkListener networkListener)
@@ -69,7 +69,7 @@ public final class NettyNetworkConnection implements NetworkConnection, Conversa
         OnNetworkError onNetworkError = channel -> NetworkErrorHandler.notifyListenerIfNotConnected(channel, networkListener);
         ConversationMessageHandler conversationMessageHandler = ConversationMessageHandler.of( conversationMessageStorage);
         Channel ch = init(ci.getAddress(), workerGroup, ci.getChannelClass(), CasualMessageHandler.of(correlator), conversationMessageHandler, ExceptionHandler.of(correlator, onNetworkError), ci.isLogHandlerEnabled());
-        NettyNetworkConnection networkConnection = new NettyNetworkConnection(ci, correlator, ch, conversationMessageStorage, EventLoopFactory.getManagedExecutorService());
+        NettyNetworkConnection networkConnection = new NettyNetworkConnection(ci, correlator, ch, conversationMessageStorage, EventLoopFactory.getExecutorService());
         LOG.finest(() -> networkConnection + " connected to: " + ci.getAddress());
         ch.closeFuture().addListener(f -> handleClose(networkConnection, networkListener));
         networkConnection.throwIfProtocolVersionNotSupportedByEIS(ci.getProtocolVersion(), ci.getDomainId(), ci.getDomainName());
@@ -165,7 +165,7 @@ public final class NettyNetworkConnection implements NetworkConnection, Conversa
         maybeMessage.ifPresent(future::complete);
         if(!future.isDone())
         {
-            managedExecutorService.execute(() -> future.complete(conversationMessageStorage.takeFirst(corrid)));
+            executorService.execute(() -> future.complete(conversationMessageStorage.takeFirst(corrid)));
         }
         return future;
     }

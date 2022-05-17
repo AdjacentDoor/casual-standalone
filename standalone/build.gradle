@@ -9,7 +9,12 @@ defaultTasks 'build'
 
 dependencies {
    implementation libs.javaee_api
+   implementation libs.jta
+   implementation libs.weld
    implementation project(':ext:casual-api')
+   implementation project(':ext:casual-network')
+   implementation project(':ext:casual-network-protocol')
+   implementation project(':ext:casual-internal')
 
    testImplementation libs.javaee_api
    testImplementation project(':ext:casual-api')

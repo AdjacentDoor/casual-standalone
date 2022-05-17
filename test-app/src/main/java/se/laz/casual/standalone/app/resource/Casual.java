@@ -3,6 +3,7 @@ package se.laz.casual.standalone.app.resource;
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJBContext;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -79,6 +80,12 @@ public class Casual implements NetworkListener
             }
             return Response.serverError().entity(sw.toString()).build();
         }
+    }
+
+    @GET
+    public Response ping()
+    {
+        return Response.ok().entity("Hello world!").build();
     }
 
     private CasualBuffer makeCasualCall(CasualBuffer msg, String serviceName, Flag<AtmiFlags> flags)

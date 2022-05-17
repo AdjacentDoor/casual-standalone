@@ -3,6 +3,7 @@ plugins {
    id 'java'
    id 'jacoco'
    id 'groovy'
+   id 'application'
 }
 
 defaultTasks 'build'
@@ -17,7 +18,9 @@ dependencies {
    implementation libs.grizzly_http_server
    implementation libs.grizzly_container
    implementation libs.commons_io
-
+   implementation libs.jersey_inject
+   implementation libs.netty
+    
    testImplementation libs.jakartaee_api
    testImplementation project(':ext:casual-api')
 
@@ -29,3 +32,8 @@ dependencies {
    testImplementation libs.cglib_nodep
    testImplementation libs.objenesis           
 }
+
+application{
+   mainClass = 'se.laz.casual.standalone.app.Application'
+}
+

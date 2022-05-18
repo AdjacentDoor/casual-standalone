@@ -3,10 +3,12 @@ package se.laz.casual.standalone.app.resource;
 import jakarta.annotation.Resource;
 import jakarta.ejb.EJBContext;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
 import org.apache.commons.io.IOUtils;
 import se.laz.casual.api.buffer.CasualBuffer;
@@ -60,12 +62,14 @@ public class Casual implements NetworkListener
     @POST
     @Consumes("application/casual-x-octet")
     @Path("{serviceName}")
-    public Response echoRequest(@PathParam("serviceName") String serviceName, InputStream inputStream)
+    public Response echoRequest(@PathParam("serviceName") String serviceName,
+                                InputStream inputStream,
+                                @DefaultValue("true") @QueryParam("trans") boolean trans)
     {
         try
         {
             byte[] data = IOUtils.toByteArray(inputStream);
-            Flag<AtmiFlags> flags = Flag.of(AtmiFlags.NOFLAG);
+            Flag<AtmiFlags> flags = trans ? Flag.of(AtmiFlags.NOFLAG) : Flag.of(AtmiFlags.TPNOTRAN);
             OctetBuffer buffer = OctetBuffer.of(data);
             return Response.ok().entity(makeCasualCall(buffer, serviceName, flags).getBytes().get(0)).build();
         }

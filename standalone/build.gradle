@@ -14,7 +14,7 @@ dependencies {
    implementation project(':ext:casual-api')
    implementation project(':ext:casual-network')
    implementation project(':ext:casual-network-protocol')
-   implementation project(':ext:casual-internal')
+   implementation project(':ext:casual-network-api')
 
    testImplementation libs.jakartaee_api
    testImplementation project(':ext:casual-api')

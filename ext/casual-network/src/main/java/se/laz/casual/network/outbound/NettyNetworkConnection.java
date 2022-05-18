@@ -18,9 +18,9 @@ import io.netty.handler.logging.LoggingHandler;
 import se.laz.casual.api.conversation.ConversationClose;
 import se.laz.casual.api.network.protocol.messages.CasualNWMessage;
 import se.laz.casual.api.network.protocol.messages.CasualNetworkTransmittable;
-import se.laz.casual.internal.network.NetworkConnection;
 import se.laz.casual.network.CasualNWMessageDecoder;
 import se.laz.casual.network.CasualNWMessageEncoder;
+import se.laz.casual.network.api.NetworkConnection;
 import se.laz.casual.network.connection.CasualConnectionException;
 import se.laz.casual.network.protocol.messages.CasualNWMessageImpl;
 import se.laz.casual.network.protocol.messages.conversation.Request;
@@ -178,12 +178,6 @@ public final class NettyNetworkConnection implements NetworkConnection, Conversa
         channel.close();
     }
 
-    @Override
-    public boolean isActive()
-    {
-        return channel.isActive();
-    }
-
     private void throwIfProtocolVersionNotSupportedByEIS(long version, final UUID domainId, final String domainName)
     {
         CasualDomainConnectRequestMessage requestMessage = CasualDomainConnectRequestMessage.createBuilder()
@@ -215,13 +209,6 @@ public final class NettyNetworkConnection implements NetworkConnection, Conversa
         sb.append('}');
         return sb.toString();
     }
-
-    @Override
-    public ConversationClose getConversationClose()
-    {
-        return this::close;
-    }
-
 
     @Override
     public void close(UUID conversationalCorrId)

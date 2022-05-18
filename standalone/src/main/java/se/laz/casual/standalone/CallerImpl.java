@@ -12,7 +12,7 @@ import se.laz.casual.api.queue.MessageSelector;
 import se.laz.casual.api.queue.QueueInfo;
 import se.laz.casual.api.queue.QueueMessage;
 import se.laz.casual.api.service.ServiceDetails;
-import se.laz.casual.internal.network.NetworkConnection;
+import se.laz.casual.network.api.NetworkConnection;
 import se.laz.casual.network.ProtocolVersion;
 import se.laz.casual.network.outbound.CorrelatorImpl;
 import se.laz.casual.network.outbound.NettyConnectionInformation;

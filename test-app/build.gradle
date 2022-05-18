@@ -12,6 +12,7 @@ dependencies {
    implementation libs.jakartaee_api
    implementation libs.jta
    implementation libs.weld
+   implementation libs.gson
    implementation project(':ext:casual-api')
    implementation project(':ext:casual-network')
    implementation project(':standalone')
@@ -19,8 +20,7 @@ dependencies {
    implementation libs.grizzly_container
    implementation libs.commons_io
    implementation libs.jersey_inject
-   implementation libs.netty
-    
+
    testImplementation libs.jakartaee_api
    testImplementation project(':ext:casual-api')
 

@@ -8,6 +8,6 @@
 include 'ext:casual-api'
 include 'ext:casual-network'
 include 'ext:casual-network-protocol'
-include 'ext:casual-internal'
+include 'ext:casual-network-api'
 include 'standalone'
 include 'test-app'

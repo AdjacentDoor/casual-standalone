@@ -1,6 +1,6 @@
 package se.laz.casual.standalone;
 
-import se.laz.casual.internal.network.NetworkConnection;
+import se.laz.casual.network.api.NetworkConnection;
 
 import javax.transaction.xa.Xid;
 import java.util.Objects;

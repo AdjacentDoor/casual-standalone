@@ -15,9 +15,9 @@ defaultTasks 'build'
 
 dependencies {
   compileOnly project(':ext:casual-api')
-  implementation project(':ext:casual-internal')
+  implementation project(':ext:casual-network-api')
   implementation project(':ext:casual-network-protocol')
-  compileOnly libs.netty
+   implementation libs.netty
   compileOnly libs.jakartaee_api
 
   testImplementation project(':ext:casual-api')

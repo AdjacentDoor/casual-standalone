@@ -93,20 +93,23 @@ public class CallerImpl implements Caller
     {
         if(!serviceExists(serviceName))
         {
-            return createTPENOENTReply();
+            return createTPENOENTReply(serviceName);
         }
         if(flags.isSet(AtmiFlags.TPNOTRAN))
         {
+            LOG.finest(() -> "tpcall TPNOTRAN " + serviceName);
             return serviceCaller.tpcall(serviceName, data, flags);
         }
+        LOG.finest(() -> "tpcall " + serviceName);
         transactional.startOrJoinTransaction(casualConnection.getCasualXAResource());
         ServiceReturn<CasualBuffer> reply = serviceCaller.tpcall(serviceName, data, flags);
         transactional.commit();
         return reply;
     }
 
-    private ServiceReturn<CasualBuffer> createTPENOENTReply()
+    private ServiceReturn<CasualBuffer> createTPENOENTReply(String serviceName)
     {
+        LOG.warning(() -> "TPENOENT for service name: " + serviceName);
         return new ServiceReturn<>(null, ServiceReturnState.TPFAIL, ErrorState.TPENOENT, 0);
     }
 
@@ -116,13 +119,15 @@ public class CallerImpl implements Caller
         if(!serviceExists(serviceName))
         {
             CompletableFuture<ServiceReturn<CasualBuffer>> future = new CompletableFuture<>();
-            future.complete(createTPENOENTReply());
+            future.complete(createTPENOENTReply(serviceName));
             return future;
         }
         if(flags.isSet(AtmiFlags.TPNOTRAN))
         {
+            LOG.finest(() -> "tpacall TPNOTRAN " + serviceName);
             return serviceCaller.tpacall(serviceName, data, flags);
         }
+        LOG.finest(() -> "tpacall " + serviceName);
         transactional.startOrJoinTransaction(casualConnection.getCasualXAResource());
         CompletableFuture<ServiceReturn<CasualBuffer>> reply = serviceCaller.tpacall(serviceName, data, flags);
         transactional.commit();

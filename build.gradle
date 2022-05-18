@@ -7,18 +7,20 @@
 //-*- coding: utf-8 -*-
 
 plugins {
-    id 'org.sonarqube' version '2.7'
+    id 'org.sonarqube' version '3.3'
 }
 
 defaultTasks 'build'
 
 sonarqube {
     properties {
-        properties["sonar.host.url"] = 'http://localhost:9000'
-        properties["sonar.verbose"] = "true"
-        properties['sonar.java.source'] = 11
+        property "sonar.projectName", "Casual Standalone"
+        property "sonar.projectKey", "se.laz.casual:casual-standalone"
+	property "sonar.host.url", "http://localhost:9000"
+	property "sonar.java.source", 11
     }
 }
+
 
 allprojects{
     tasks.withType(JavaCompile) { 
@@ -39,6 +41,7 @@ subprojects{
 	    events "passed", "skipped", "failed"
 	}
     }
+    apply plugin: 'org.sonarqube'
 }
 
 task dist(type: Copy, dependsOn: getTasksByName("build", false)) {

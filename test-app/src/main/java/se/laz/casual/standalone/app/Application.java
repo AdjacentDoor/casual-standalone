@@ -7,9 +7,11 @@ import se.laz.casual.standalone.app.resource.Casual;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Logger;
 
 public class Application
 {
+    private static final Logger LOG = Logger.getLogger(Application.class.getName());
     private static final URI BASE_URI = URI.create("http://localhost:7575/");
     private static final String CASUAL_PATH = "casual";
 
@@ -21,12 +23,14 @@ public class Application
         try
         {
             server.start();
-            System.out.println("Application started");
-            System.out.println("Stop the application using CTRL+C");
+            LOG.info(() ->"Application started");
+            LOG.info(() ->"Resource at: " + BASE_URI + CASUAL_PATH);
+            LOG.info(() -> "Stop the application using CTRL+C");
             Thread.currentThread().join();
         }
         catch (IOException | InterruptedException e)
         {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
@@ -35,4 +39,5 @@ public class Application
     {
         startServer();
     }
+
 }

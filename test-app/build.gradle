@@ -11,7 +11,6 @@ defaultTasks 'build'
 dependencies {
    implementation libs.jakartaee_api
    implementation libs.jta
-   implementation libs.weld
    implementation libs.gson
    implementation project(':ext:casual-api')
    implementation project(':ext:casual-network')

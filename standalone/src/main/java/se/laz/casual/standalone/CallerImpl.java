@@ -34,14 +34,16 @@ public class CallerImpl implements Caller
     private final CasualConnection casualConnection;
     private final Transactional transactional;
     private final ServiceCaller serviceCaller;
+    private final QueueCaller queueCaller;
     private final Set<String> serviceCache = new HashSet<>();
     private final Set<String> queueCache = new HashSet<>();
 
-    private CallerImpl(CasualConnection casualConnection, Transactional transactional, ServiceCaller serviceCaller)
+    private CallerImpl(CasualConnection casualConnection, Transactional transactional, ServiceCaller serviceCaller, QueueCaller queueCaller)
     {
         this.casualConnection = casualConnection;
         this.transactional = transactional;
         this.serviceCaller = serviceCaller;
+        this.queueCaller = queueCaller;
     }
 
     private static Caller of(InetSocketAddress address, ProtocolVersion protocolVersion, UUID domainId, String domainName, NetworkListener networkListener, int resourceManagerId)
@@ -55,7 +57,7 @@ public class CallerImpl implements Caller
         CasualConnection casualConnection = CasualConnection.of(networkConnection);
         CasualXAResource casualXAResource = CasualXAResource.of(casualConnection, resourceManagerId);
         casualConnection.setCasualXAResource(casualXAResource);
-        return new CallerImpl(casualConnection, Transactional.of(), ServiceCallerImpl.of(casualConnection));
+        return new CallerImpl(casualConnection, Transactional.of(), ServiceCallerImpl.of(casualConnection), QueueCallerImpl.of(casualConnection));
     }
 
     private static NetworkConnection createNetworkConnection(InetSocketAddress address, ProtocolVersion protocolVersion, UUID domainId, String domainName, NetworkListener networkListener)
@@ -73,18 +75,45 @@ public class CallerImpl implements Caller
     @Override
     public EnqueueReturn enqueue(QueueInfo qinfo, QueueMessage msg)
     {
-        return null;
+        if(!queueExists(qinfo))
+        {
+            return EnqueueReturn.createBuilder()
+                                .withErrorState(ErrorState.TPENOENT)
+                                .build();
+        }
+        transactional.startOrJoinTransaction(casualConnection.getCasualXAResource());
+        EnqueueReturn reply = queueCaller.enqueue(qinfo, msg);
+        transactional.commit();
+        return reply;
     }
 
     @Override
     public DequeueReturn dequeue(QueueInfo qinfo, MessageSelector selector)
     {
-        return null;
+        if(!queueExists(qinfo))
+        {
+            return DequeueReturn.createBuilder()
+                                .withErrorState(ErrorState.TPENOENT)
+                                .build();
+        }
+        transactional.startOrJoinTransaction(casualConnection.getCasualXAResource());
+        DequeueReturn reply = queueCaller.dequeue(qinfo, selector);
+        transactional.commit();
+        return reply;
     }
 
     @Override
     public boolean queueExists(QueueInfo qinfo)
     {
+        if(queueCache.contains(qinfo.getQueueName()))
+        {
+            return true;
+        }
+        if(queueCaller.queueExists(qinfo))
+        {
+            queueCache.add(qinfo.getQueueName());
+            return true;
+        }
         return false;
     }
 
@@ -109,7 +138,7 @@ public class CallerImpl implements Caller
 
     private ServiceReturn<CasualBuffer> createTPENOENTReply(String serviceName)
     {
-        LOG.warning(() -> "TPENOENT for service name: " + serviceName);
+        LOG.warning(() -> "TPENOENT for service: " + serviceName);
         return new ServiceReturn<>(null, ServiceReturnState.TPFAIL, ErrorState.TPENOENT, 0);
     }
 

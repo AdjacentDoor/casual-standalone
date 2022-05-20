@@ -6,13 +6,8 @@
 
 package se.laz.casual.network.connection;
 
-import jakarta.ejb.ApplicationException;
 import se.laz.casual.api.CasualRuntimeException;
 
-/**
- * Created by jone on 2017-04-26.
- */
-@ApplicationException(rollback = true)
 public class CasualConnectionException extends CasualRuntimeException
 {
 

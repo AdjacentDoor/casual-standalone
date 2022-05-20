@@ -31,7 +31,7 @@ public class Application
         catch (IOException | InterruptedException e)
         {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            throw new ApplicationFailedException(e);
         }
     }
 

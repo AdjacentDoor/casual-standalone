@@ -8,14 +8,12 @@ plugins {
 defaultTasks 'build'
 
 dependencies {
-   implementation libs.jakartaee_api
    implementation libs.jta
    implementation project(':ext:casual-api')
    implementation project(':ext:casual-network')
    implementation project(':ext:casual-network-protocol')
    implementation project(':ext:casual-network-api')
 
-   testImplementation libs.jakartaee_api
    testImplementation project(':ext:casual-api')
 
    // for spock

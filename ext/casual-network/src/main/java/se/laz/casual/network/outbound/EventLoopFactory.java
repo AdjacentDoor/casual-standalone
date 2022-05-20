@@ -12,11 +12,9 @@ import se.laz.casual.config.Outbound;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 public final class EventLoopFactory
 {
-    private static final Logger LOG = Logger.getLogger(NettyNetworkConnection.class.getName());
     private static final EventLoopGroup INSTANCE = createEventLoopGroup();
     private EventLoopFactory()
     {}

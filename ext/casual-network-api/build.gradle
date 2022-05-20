@@ -15,11 +15,8 @@ defaultTasks 'build'
 dependencies {
     compileOnly project(':ext:casual-api')
     implementation project(':ext:casual-network-protocol')
-    compileOnly libs.jakartaee_api
 
     testImplementation project(':ext:casual-api')
-    testImplementation libs.jakartaee_api
-
     // for spock
     implementation libs.groovy_all
     testImplementation platform(libs.spock_bom)

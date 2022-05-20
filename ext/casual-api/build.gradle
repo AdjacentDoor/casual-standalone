@@ -13,10 +13,8 @@ plugins {
 defaultTasks 'build'
 
 dependencies {
-  compileOnly libs.jakartaee_api
   compileOnly libs.gson
 
-  testImplementation  libs.jakartaee_api
   testImplementation libs.gson
   testImplementation libs.system_lambda
     

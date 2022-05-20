@@ -36,13 +36,9 @@ public class Transactional
             transaction.enlistResource(casualXAResource);
             return transaction;
         }
-        catch (SystemException e)
+        catch (SystemException | NotSupportedException | RollbackException e)
         {
-            throw new RuntimeException(e);
-        }
-        catch (NotSupportedException | RollbackException e)
-        {
-            throw new RuntimeException(e);
+            throw new TransactionException("failed starting or joining transaction", e);
         }
     }
 
@@ -52,21 +48,9 @@ public class Transactional
         {
             transactionManager.commit();
         }
-        catch (HeuristicRollbackException e)
+        catch (RollbackException | SystemException | HeuristicMixedException | HeuristicRollbackException e)
         {
-            throw new RuntimeException(e);
-        }
-        catch (SystemException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (HeuristicMixedException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (RollbackException e)
-        {
-            throw new RuntimeException(e);
+            throw new TransactionException("commit failed", e);
         }
     }
 

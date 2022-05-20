@@ -14,11 +14,9 @@ plugins {
 defaultTasks 'build'
 
 dependencies {
-  compileOnly libs.jakartaee_api
   compileOnly libs.netty
   compileOnly project(':ext:casual-api')
 
-  testImplementation libs.jakartaee_api
   testImplementation libs.netty
   testImplementation project(':ext:casual-api')  
 

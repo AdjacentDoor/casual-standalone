@@ -17,13 +17,11 @@ dependencies {
   compileOnly project(':ext:casual-api')
   implementation project(':ext:casual-network-api')
   implementation project(':ext:casual-network-protocol')
-   implementation libs.netty
-  compileOnly libs.jakartaee_api
+  implementation libs.netty
 
   testImplementation project(':ext:casual-api')
   testImplementation libs.system_lambda
   testImplementation libs.netty
-  testImplementation libs.jakartaee_api
 
   // for spock
   implementation libs.groovy_all
